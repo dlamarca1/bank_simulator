@@ -56,7 +56,7 @@ class BankCLI:
         ) \
             .strip() \
             .lower()
-        credit: float = float(
+        balance: float = float(
             input(
                 "\nProvide the amount you are starting with:\n"
             )
@@ -64,7 +64,7 @@ class BankCLI:
 
         self.bank.createAccount(
             account_holder=name,
-            initial_credit=credit
+            initial_balance=balance
         )
 
     def _closeAccount(
@@ -148,13 +148,27 @@ class BankCLI:
     def _exit(
         self
     ) -> None:
-        is_exit: str = input("\nAre you sure you want to exit? (y/n)\n").strip().lower()
+        is_exit: str = input(
+            "\nAre you sure you want to exit? (y/n)\n"
+        ) \
+            .strip() \
+            .lower()
         if is_exit == 'y':
-            logging.info('\nEnding session on user request\n')
-            logging.info('\nThanks for visiting our bank!')
+            logging.info(
+                '\nEnding session on user request\n'
+            )
+            logging.info(
+                '\nThanks for visiting our bank!'
+            )
             raise SystemExit
         elif is_exit == 'n':
-            logging.info('\nReturning to menu..\n')
+            logging.info(
+                '\nReturning to menu..\n'
+            )
         else:
-            logging.warning(f'\nThe command {is_exit} is not a valid command!\n')
-            logging.info('\nReturning to menu..\n')
+            logging.warning(
+                f'\nThe command {is_exit} is not a valid command!\n'
+            )
+            logging.info(
+                '\nReturning to menu..\n'
+            )

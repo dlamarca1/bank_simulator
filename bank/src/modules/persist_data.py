@@ -5,47 +5,66 @@ import os
 class PersistBankDataJson(dict):
     def __init__(
         self,
-        file_path: str
+        dir_path: str
     ) -> None:
-        self.file_path: str = file_path
+        self.dir_path: str = dir_path
+        os.makedirs(
+            self.dir_path,
+            exist_ok=True
+        )
 
-        if os.path.exists(
-            file_path
+        for filename in os.listdir(
+            self.dir_path
         ):
-            with open(
-                file_path,
-                'r'
-            ) as file:
+            if filename.endswith(
+                '.json'
+            ):
+                holder_name: str = filename[:-5]
+                file_path = os.path.join(
+                    self.dir_path,
+                    filename
+                )
                 try:
-                    data = json.load(
-                        file
-                    )
-                    super().__init__(
-                        data
-                    )
-                except json.JSONDecodeError:
-                    super().__init__()
-        else:
-            super().__init__()
-            self._save()
+                    with open(
+                        file_path,
+                        'r'
+                    ) as f:
+                        data = json.load(f)
+                        super().__setitem__(
+                            holder_name,
+                            data
+                        )
+                except (
+                    json.JSONDecodeError,
+                    IOError
+                ):
+                    pass
 
-    def _save(
-        self
+    def _file_path(
+        self,
+        holder_name: str
+    ) -> str:
+        return os.path.join(
+            self.dir_path,
+            f"{holder_name}.json"
+        )
+
+    def _save_holder(
+        self,
+        holder_name: str
     ) -> None:
-        def convert(
-            o
-        ) -> str:
-            return str(o)
-
+        file_path = self._file_path(
+            holder_name
+        )
         with open(
-            self.file_path,
+            file_path,
             'w'
-        ) as file:
+        ) as f:
             json.dump(
-                self,
-                file,
+                self[holder_name],
+                f,
                 indent=4,
-                default=convert
+                default=str
             )
 
     def __setitem__(
@@ -57,7 +76,9 @@ class PersistBankDataJson(dict):
             key,
             value
         )
-        self._save()
+        self._save_holder(
+            key
+        )
 
     def __delitem__(
         self,
@@ -66,7 +87,15 @@ class PersistBankDataJson(dict):
         super().__delitem__(
             key
         )
-        self._save()
+        file_path = self._file_path(
+            key
+        )
+        if os.path.exists(
+            file_path
+        ):
+            os.remove(
+                file_path
+            )
 
     def update(
         self,
@@ -77,10 +106,15 @@ class PersistBankDataJson(dict):
             *args,
             **kwargs
         )
-        self._save()
+        for holder_name in self.keys():
+            self._save_holder(
+                holder_name
+            )
 
     def clear(
         self
     ) -> None:
-        super().clear()
-        self._save()
+        for holder_name in list(
+            self.keys()
+        ):
+            del self[holder_name]
