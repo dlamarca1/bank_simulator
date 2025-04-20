@@ -45,5 +45,6 @@ This project demonstrates the use of classes to build a more complete and modula
 ## TODO
 
 - [ ] Add class and function-level docstrings  
-- [ ] Implement input validation and error handling  
-- [ ] Extend system with more complex class structures and models
+- [ ] Implement input validation and error handling
+- [ ] Add unit testing
+- [ ] Extend system with more complex class structures and models, adding more features and operations
